@@ -383,13 +383,9 @@ function requestLandscape() {
   } catch (err) {}
 }
 
-// Kontrol tombol Layar Penuh pada Opening Screen & Top Bar
-const openingFsBtn = document.getElementById("openingFsBtn");
+// Update indikator fullscreen pada tombol top bar (jika game sudah dimulai)
 function updateFullscreenUI() {
   const isFS = !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement);
-  if (openingFsBtn) {
-    openingFsBtn.style.display = isFS ? "none" : "inline-flex";
-  }
   if (fullscreenBtn) {
     fullscreenBtn.textContent = isFS ? "🗗" : "⛶";
   }
@@ -400,18 +396,14 @@ document.addEventListener("webkitfullscreenchange", updateFullscreenUI);
 document.addEventListener("mozfullscreenchange", updateFullscreenUI);
 document.addEventListener("MSFullscreenChange", updateFullscreenUI);
 
-if (openingFsBtn) {
-  openingFsBtn.addEventListener("click", (e) => {
-    e.stopPropagation();
-    requestLandscape();
-  });
-  openingFsBtn.addEventListener("touchend", (e) => {
-    e.stopPropagation();
-    requestLandscape();
-  });
-}
+// Coba langsung masuk mode Fullscreen & Landscape sejak awal
+try {
+  requestLandscape();
+} catch (e) {}
+window.addEventListener("DOMContentLoaded", () => requestLandscape());
+window.addEventListener("load", () => requestLandscape());
 
-// Aktifkan Layar Penuh otomatis pada sentuhan atau ketukan apapun di opening
+// Begitu ada sentuhan/ketukan pertama di layar mana saja, langsung aktifkan Fullscreen tanpa tombol khusus
 const opening = document.getElementById("opening");
 if (opening) {
   opening.addEventListener("click", () => {
@@ -428,6 +420,7 @@ function onGlobalUserGesture() {
 }
 window.addEventListener("click", onGlobalUserGesture, { passive: true });
 window.addEventListener("touchend", onGlobalUserGesture, { passive: true });
+window.addEventListener("touchstart", onGlobalUserGesture, { passive: true });
 
 const lockLandscapeBtn = document.getElementById("lockLandscapeBtn");
 if (lockLandscapeBtn) {
