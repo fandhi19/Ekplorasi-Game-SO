@@ -330,6 +330,26 @@
         margin-top: 1px;
       }
 
+      /* Efek Khusus Tombol E saat Dialog Terbuka */
+      .action-btn.dialog-exit-mode {
+        border-color: #ffffff;
+        box-shadow:
+          0 6px 20px rgba(245, 183, 0, 0.75),
+          0 0 24px rgba(255, 215, 0, 0.65),
+          inset 0 2px 4px rgba(255, 255, 255, 0.8);
+        animation: pulseExitBtn 1.2s ease-in-out infinite;
+      }
+      @keyframes pulseExitBtn {
+        0%, 100% {
+          transform: scale(1);
+          filter: drop-shadow(0 0 8px rgba(245, 183, 0, 0.6));
+        }
+        50% {
+          transform: scale(1.08);
+          filter: drop-shadow(0 0 18px rgba(255, 215, 0, 0.95)) brightness(1.1);
+        }
+      }
+
       /* Penyesuaian ukuran di layar sangat kecil */
       @media (max-width: 480px), (max-height: 480px) {
         #dpad-container {

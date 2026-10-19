@@ -47,13 +47,15 @@ export function drawDialog(ctx, canvasW, canvasH, clue) {
   const isMobile = canvasW < 768 || canvasH < 520;
   const isTablet = canvasW >= 768 && canvasW <= 1024;
 
-  const boxW = isMobile ? Math.min(canvasW - 24, 740) : isTablet ? Math.min(canvasW - 60, 920) : Math.min(1120, canvasW - 80);
+  const boxW = isMobile ? Math.min(canvasW - 24, 780) : isTablet ? Math.min(canvasW - 60, 920) : Math.min(1120, canvasW - 80);
   const padX = isMobile ? 18 : 30;
-  const maxW = boxW - padX * 2;
+  // Berikan ruang aman di sisi kanan pada mobile agar teks tidak pernah tertutup oleh Tombol E
+  const padRight = isMobile ? 80 : padX;
+  const maxW = boxW - padX - padRight;
 
-  const titleFont = isMobile ? "bold 17px sans-serif" : "bold 23px sans-serif";
-  const textFont = isMobile ? "14px sans-serif" : "18px sans-serif";
-  const lineH = isMobile ? 22 : 27;
+  const titleFont = isMobile ? "bold 15px sans-serif" : "bold 23px sans-serif";
+  const textFont = isMobile ? "13px sans-serif" : "18px sans-serif";
+  const lineH = isMobile ? 19 : 27;
 
   // Ukur seluruh baris teks terlebih dahulu agar boxH pas sempurna
   ctx.font = textFont;
@@ -63,13 +65,13 @@ export function drawDialog(ctx, canvasW, canvasH, clue) {
     totalTextHeight += l.isBreak ? lineH * 0.45 : lineH;
   }
 
-  const headerH = isMobile ? 46 : 62;
-  const footerH = isMobile ? 36 : 46;
+  const headerH = isMobile ? 38 : 62;
+  const footerH = isMobile ? 28 : 46;
   const neededBoxH = headerH + totalTextHeight + footerH;
   const maxBoxH = canvasH - (isMobile ? 16 : 40);
-  const boxH = Math.min(maxBoxH, Math.max(isMobile ? 140 : 180, neededBoxH));
+  const boxH = Math.min(maxBoxH, Math.max(isMobile ? 120 : 180, neededBoxH));
   const boxX = (canvasW - boxW) / 2;
-  const boxY = canvasH - boxH - (isMobile ? 10 : 25);
+  const boxY = Math.max(isMobile ? 8 : 20, canvasH - boxH - (isMobile ? 10 : 25));
 
   ctx.save();
 
@@ -92,7 +94,7 @@ export function drawDialog(ctx, canvasW, canvasH, clue) {
   ctx.strokeRect(boxX + 4, boxY + 4, boxW - 8, boxH - 8);
 
   // ====== JUDUL ======
-  const titleY = isMobile ? boxY + 12 : boxY + 18;
+  const titleY = isMobile ? boxY + 10 : boxY + 18;
   ctx.fillStyle = "#f5b700";
   ctx.font = titleFont;
   ctx.textAlign = "left";
@@ -100,7 +102,7 @@ export function drawDialog(ctx, canvasW, canvasH, clue) {
   ctx.fillText(clue.title, boxX + padX, titleY);
 
   // Garis bawah judul
-  const lineY = isMobile ? boxY + 38 : boxY + 52;
+  const lineY = isMobile ? boxY + 34 : boxY + 52;
   ctx.strokeStyle = "rgba(245, 183, 0, 0.35)";
   ctx.lineWidth = 1;
   ctx.beginPath();
@@ -111,13 +113,13 @@ export function drawDialog(ctx, canvasW, canvasH, clue) {
   // ====== ISI TEKS (dengan clipping pengaman) ======
   ctx.save();
   ctx.beginPath();
-  ctx.rect(boxX + 6, lineY + 6, boxW - 12, boxH - (lineY - boxY) - (isMobile ? 32 : 40));
+  ctx.rect(boxX + 6, lineY + 4, boxW - 12, boxH - (lineY - boxY) - (isMobile ? 26 : 40));
   ctx.clip();
 
   ctx.fillStyle = "#eee";
   ctx.font = textFont;
   const textX = boxX + padX;
-  const textY = lineY + (isMobile ? 10 : 16);
+  const textY = lineY + (isMobile ? 8 : 16);
   wrapText(ctx, displayText, textX, textY, maxW, lineH);
   ctx.restore();
 
@@ -125,19 +127,19 @@ export function drawDialog(ctx, canvasW, canvasH, clue) {
   if (isDone) {
     const blink = Math.sin(performance.now() / 300) > 0;
     if (blink) {
-      ctx.fillStyle = "#f5b700";
-      ctx.font = isMobile ? "bold 13px sans-serif" : "bold 15px sans-serif";
+      ctx.fillStyle = "#ffd700";
+      ctx.font = isMobile ? "bold 12px sans-serif" : "bold 15px sans-serif";
       ctx.textAlign = "right";
       ctx.textBaseline = "bottom";
-      ctx.fillText(isMobile ? "▶ Ketuk layar / Tombol E" : "▶ Tekan E untuk tutup", boxX + boxW - (isMobile ? 14 : 20), boxY + boxH - (isMobile ? 8 : 14));
+      ctx.fillText(isMobile ? "▶ Klik Tombol E untuk Keluar" : "▶ Tekan E untuk Keluar", boxX + boxW - (isMobile ? 85 : 20), boxY + boxH - (isMobile ? 7 : 14));
     }
   } else {
     // Indicator "..." saat sedang ngetik
     ctx.fillStyle = "rgba(255,255,255,0.45)";
-    ctx.font = isMobile ? "italic 12px sans-serif" : "italic 13px sans-serif";
+    ctx.font = isMobile ? "italic 11px sans-serif" : "italic 13px sans-serif";
     ctx.textAlign = "right";
     ctx.textBaseline = "bottom";
-    ctx.fillText("mengetik...", boxX + boxW - (isMobile ? 14 : 20), boxY + boxH - (isMobile ? 8 : 14));
+    ctx.fillText("mengetik...", boxX + boxW - (isMobile ? 85 : 20), boxY + boxH - (isMobile ? 7 : 14));
   }
 
   ctx.restore();

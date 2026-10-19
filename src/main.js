@@ -39,10 +39,45 @@ if (hint) {
   }, 5000);
 }
 
-// Ketuk layar untuk tutup dialog atau toggle fullscreen
+// Kontrol Visibilitas Tombol Virtual saat Dialog Materi Terbuka
+let lastDialogState = null;
+const dpadEl = document.getElementById("dpad-container");
+const actionBtnEl = document.getElementById("actionBtn");
+
+function updateVirtualControlsVisibility(isDialogOpen) {
+  if (isDialogOpen === lastDialogState) return;
+  lastDialogState = isDialogOpen;
+
+  if (dpadEl) {
+    if (isDialogOpen) {
+      dpadEl.style.transition = "opacity 0.2s ease, transform 0.2s ease";
+      dpadEl.style.opacity = "0";
+      dpadEl.style.pointerEvents = "none";
+      dpadEl.style.transform = "scale(0.85)";
+    } else {
+      dpadEl.style.transition = "opacity 0.2s ease, transform 0.2s ease";
+      dpadEl.style.opacity = "1";
+      dpadEl.style.pointerEvents = "auto";
+      dpadEl.style.transform = "scale(1)";
+    }
+  }
+
+  if (actionBtnEl) {
+    const label = actionBtnEl.querySelector(".action-label");
+    if (isDialogOpen) {
+      actionBtnEl.classList.add("dialog-exit-mode");
+      if (label) label.textContent = "KELUAR";
+    } else {
+      actionBtnEl.classList.remove("dialog-exit-mode");
+      if (label) label.textContent = "AKSI";
+    }
+  }
+}
+
+// Ketuk layar (dialog materi HANYA BISA KELUAR LEWAT TOMBOL E)
 canvas.addEventListener("pointerdown", (e) => {
+  // Jika dialog materi sedang terbuka, sentuhan layar biasa tidak boleh menutup dialog
   if (getOpenClue()) {
-    dismissOrSkipDialog();
     return;
   }
   // Tap pada area badge tracker kanan atas untuk buka/tutup
@@ -116,7 +151,10 @@ function loop(now) {
   last = now;
 
   // Update
-  if (!getOpenClue()) updatePlayer(dt);
+  const currentOpenClue = getOpenClue();
+  updateVirtualControlsVisibility(!!currentOpenClue);
+
+  if (!currentOpenClue) updatePlayer(dt);
   updateCamera(GAME_W, GAME_H);
   updateInteraction();
   updateParticles(dt, camera, GAME_W, GAME_H);

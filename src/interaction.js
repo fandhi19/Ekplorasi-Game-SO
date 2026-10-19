@@ -87,11 +87,14 @@ export function updateInteraction() {
   if (openClue) {
     if (ePressed && !isTypingDone()) {
       skipTypewriter();
+      keys["e"] = false;
       return;
     }
-    if (ePressed || keys["escape"] || keys[" "]) {
+    if (ePressed || keys["escape"]) {
       openClue = null;
       resetTypewriter();
+      keys["e"] = false;
+      lastE = true;
     }
     return;
   }
