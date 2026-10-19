@@ -1,0 +1,1289 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <title>Eksplorasi LKPD - SMAN 4 Yogyakarta</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: #000;
+        font-family:
+          "Segoe UI",
+          Roboto,
+          -apple-system,
+          sans-serif;
+        user-select: none;
+        -webkit-user-select: none;
+        touch-action: none;
+        -webkit-touch-callout: none;
+      }
+      canvas {
+        display: block;
+        width: 100vw;
+        height: 100vh;
+        touch-action: none;
+      }
+      #hint {
+        position: fixed;
+        bottom: 16px;
+        left: 50%;
+        transform: translateX(-50%);
+        color: #fff;
+        background: rgba(0, 0, 0, 0.7);
+        padding: 6px 14px;
+        border-radius: 8px;
+        pointer-events: none;
+        font-size: 13px;
+        z-index: 10;
+        text-align: center;
+        white-space: nowrap;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+      }
+
+      /* ===== OVERLAY WAJIB LANDSCAPE (MOBILE / TABLET) ===== */
+      #rotateOverlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: radial-gradient(circle at center, #1e1e3a 0%, #080814 100%);
+        z-index: 99999;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        color: #fff;
+        text-align: center;
+      }
+      /* Muncul saat perangkat vertikal (portrait) pada mobile / tablet */
+      @media screen and (orientation: portrait) and (max-width: 1024px) {
+        #rotateOverlay {
+          display: flex;
+        }
+      }
+      .rotate-box {
+        max-width: 360px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 14px;
+      }
+      .rotate-box h2 {
+        font-size: 22px;
+        color: #f5b700;
+        letter-spacing: 0.5px;
+      }
+      .rotate-box p {
+        font-size: 14px;
+        color: #bbb;
+        line-height: 1.5;
+      }
+      /* Animasi HP Berputar 90 Derajat */
+      .phone-anim {
+        width: 80px;
+        height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 8px;
+      }
+      .phone-icon {
+        width: 40px;
+        height: 68px;
+        border: 3.5px solid #f5b700;
+        border-radius: 9px;
+        position: relative;
+        animation: rotatePhone 2.4s infinite ease-in-out;
+        box-shadow: 0 0 20px rgba(245, 183, 0, 0.4);
+      }
+      .phone-icon::after {
+        content: "";
+        position: absolute;
+        bottom: 5px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #f5b700;
+      }
+      .phone-icon::before {
+        content: "";
+        position: absolute;
+        top: 6px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 14px;
+        height: 3px;
+        border-radius: 2px;
+        background: rgba(245, 183, 0, 0.6);
+      }
+      @keyframes rotatePhone {
+        0%,
+        20% {
+          transform: rotate(0deg);
+        }
+        50%,
+        80% {
+          transform: rotate(-90deg);
+        }
+        100% {
+          transform: rotate(0deg);
+        }
+      }
+      .lock-btn {
+        background: linear-gradient(180deg, #ffd700 0%, #f5b700 100%);
+        color: #000;
+        border: none;
+        padding: 12px 24px;
+        font-size: 14px;
+        font-weight: bold;
+        border-radius: 10px;
+        cursor: pointer;
+        box-shadow: 0 4px 14px rgba(245, 183, 0, 0.4);
+        margin-top: 6px;
+        font-family: inherit;
+        touch-action: manipulation;
+      }
+      .lock-btn:active {
+        transform: scale(0.95);
+      }
+
+      /* ===== TOP QUICK BAR ===== */
+      #top-bar {
+        position: fixed;
+        top: max(10px, env(safe-area-inset-top));
+        left: max(10px, env(safe-area-inset-left));
+        display: flex;
+        gap: 8px;
+        z-index: 30;
+      }
+      .top-btn {
+        background: rgba(18, 18, 30, 0.85);
+        border: 1.5px solid rgba(245, 183, 0, 0.45);
+        border-radius: 18px;
+        color: #f5b700;
+        padding: 6px 12px;
+        font-size: 13px;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        cursor: pointer;
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+        transition:
+          transform 0.1s,
+          background 0.15s;
+        touch-action: manipulation;
+      }
+      .top-btn:active {
+        transform: scale(0.92);
+        background: rgba(245, 183, 0, 0.3);
+      }
+
+      /* ===== KONTROL VIRTUAL SENTUH (MOBILE & TABLET) ===== */
+      #virtual-controls {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 20;
+        display: none;
+      }
+      /* Muncul otomatis pada touch device atau layar <= 1024px */
+      @media (pointer: coarse), (max-width: 1024px) {
+        #virtual-controls {
+          display: block;
+        }
+        #hint {
+          display: none; /* di mobile diganti kontrol sentuh */
+        }
+      }
+
+      /* D-Pad Container */
+      #dpad-container {
+        position: fixed;
+        left: max(16px, env(safe-area-inset-left));
+        bottom: max(16px, env(safe-area-inset-bottom));
+        width: 144px;
+        height: 144px;
+        display: grid;
+        grid-template-columns: 46px 46px 46px;
+        grid-template-rows: 46px 46px 46px;
+        gap: 3px;
+        justify-content: center;
+        align-content: center;
+        pointer-events: auto;
+        touch-action: none;
+      }
+      .dpad-btn {
+        background: rgba(22, 22, 40, 0.75);
+        border: 2px solid rgba(245, 183, 0, 0.5);
+        color: #f5b700;
+        font-size: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        transition:
+          transform 0.08s,
+          background 0.08s;
+        touch-action: none;
+      }
+      .dpad-btn:active,
+      .dpad-btn.active {
+        background: rgba(245, 183, 0, 0.45);
+        border-color: #ffd700;
+        color: #fff;
+        transform: scale(0.92);
+      }
+      .dpad-up {
+        grid-column: 2;
+        grid-row: 1;
+        border-radius: 14px 14px 6px 6px;
+      }
+      .dpad-left {
+        grid-column: 1;
+        grid-row: 2;
+        border-radius: 14px 6px 6px 14px;
+      }
+      .dpad-center {
+        grid-column: 2;
+        grid-row: 2;
+        background: rgba(14, 14, 26, 0.6);
+        border: 1px solid rgba(245, 183, 0, 0.2);
+        border-radius: 8px;
+        pointer-events: none;
+      }
+      .dpad-right {
+        grid-column: 3;
+        grid-row: 2;
+        border-radius: 6px 14px 14px 6px;
+      }
+      .dpad-down {
+        grid-column: 2;
+        grid-row: 3;
+        border-radius: 6px 6px 14px 14px;
+      }
+
+      /* Tombol Aksi "E" */
+      #action-container {
+        position: fixed;
+        right: max(18px, env(safe-area-inset-right));
+        bottom: max(18px, env(safe-area-inset-bottom));
+        pointer-events: auto;
+        touch-action: none;
+      }
+      .action-btn {
+        width: 76px;
+        height: 76px;
+        border-radius: 50%;
+        background: radial-gradient(circle at 35% 35%, #ffd700 0%, #e6a100 100%);
+        border: 3px solid rgba(255, 255, 255, 0.75);
+        box-shadow:
+          0 6px 18px rgba(245, 183, 0, 0.5),
+          inset 0 2px 4px rgba(255, 255, 255, 0.6);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        touch-action: none;
+        transition:
+          transform 0.08s,
+          filter 0.08s;
+      }
+      .action-btn:active,
+      .action-btn.active {
+        transform: scale(0.9);
+        box-shadow: 0 2px 10px rgba(245, 183, 0, 0.3);
+        filter: brightness(1.2);
+      }
+      .action-key {
+        font-size: 24px;
+        font-weight: 900;
+        color: #111;
+        line-height: 1;
+      }
+      .action-label {
+        font-size: 10px;
+        font-weight: 800;
+        color: #222;
+        letter-spacing: 0.8px;
+        margin-top: 1px;
+      }
+
+      /* Penyesuaian ukuran di layar sangat kecil */
+      @media (max-width: 480px), (max-height: 480px) {
+        #dpad-container {
+          width: 126px;
+          height: 126px;
+          grid-template-columns: 40px 40px 40px;
+          grid-template-rows: 40px 40px 40px;
+          left: max(10px, env(safe-area-inset-left));
+          bottom: max(10px, env(safe-area-inset-bottom));
+        }
+        .action-btn {
+          width: 66px;
+          height: 66px;
+          right: max(12px, env(safe-area-inset-right));
+          bottom: max(12px, env(safe-area-inset-bottom));
+        }
+        .action-key {
+          font-size: 20px;
+        }
+        .action-label {
+          font-size: 9px;
+        }
+      }
+
+      /* ===== OPENING SCREEN (HERO RPG TITLE SCREEN) ===== */
+      #opening {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 100;
+        transition: opacity 0.8s ease;
+        padding: max(8px, env(safe-area-inset-top)) max(18px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) max(18px, env(safe-area-inset-left));
+        overflow-y: auto;
+        overflow-x: hidden;
+        -webkit-overflow-scrolling: touch;
+        box-sizing: border-box;
+      }
+      #opening.fade-out {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      /* Background layers */
+      .opening-bg-world {
+        position: absolute;
+        inset: -20px;
+        background-image: url("assets/world/world.png");
+        background-size: cover;
+        background-position: center 45%;
+        filter: blur(4px) brightness(0.25) saturate(1.4);
+        transform: scale(1.05);
+        z-index: 1;
+      }
+      .opening-overlay {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(ellipse at 50% 40%, rgba(26, 22, 60, 0.78) 0%, rgba(8, 8, 22, 0.96) 85%);
+        z-index: 2;
+      }
+      .opening-grid {
+        position: absolute;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(245, 183, 0, 0.05) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(245, 183, 0, 0.05) 1px, transparent 1px);
+        background-size: 38px 38px;
+        z-index: 3;
+        pointer-events: none;
+      }
+
+      /* Partikel mengambang ambient */
+      .opening-particles {
+        position: absolute;
+        inset: 0;
+        z-index: 4;
+        pointer-events: none;
+        overflow: hidden;
+      }
+      .particle {
+        position: absolute;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(255, 215, 0, 0.8) 0%, rgba(255, 215, 0, 0) 70%);
+        animation: floatUp 8s linear infinite;
+      }
+      .p1 { width: 8px; height: 8px; left: 12%; animation-duration: 9s; animation-delay: 0s; }
+      .p2 { width: 5px; height: 5px; left: 28%; animation-duration: 7s; animation-delay: 2s; }
+      .p3 { width: 10px; height: 10px; left: 52%; animation-duration: 11s; animation-delay: 1s; }
+      .p4 { width: 6px; height: 6px; left: 74%; animation-duration: 8.5s; animation-delay: 3s; }
+      .p5 { width: 7px; height: 7px; left: 88%; animation-duration: 10s; animation-delay: 1.5s; }
+      .p6 { width: 4px; height: 4px; left: 40%; animation-duration: 6.5s; animation-delay: 4s; }
+
+      @keyframes floatUp {
+        0% { transform: translateY(105vh) scale(0.6); opacity: 0; }
+        25% { opacity: 0.85; }
+        80% { opacity: 0.85; }
+        100% { transform: translateY(-20px) scale(1.3); opacity: 0; }
+      }
+
+      /* Konten Utama Opening */
+      .opening-content {
+        position: relative;
+        z-index: 10;
+        text-align: center;
+        color: #eee;
+        max-width: 940px;
+        width: 100%;
+        margin: auto;
+        padding: 4px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: clamp(6px, 1.4vh, 12px);
+        box-sizing: border-box;
+      }
+
+      /* ===== BAGIAN ATAS: HEADER TENGAH ===== */
+      .opening-header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        width: 100%;
+      }
+
+      /* Lencana SMA NEGERI 4 YOGYAKARTA */
+      .hero-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(245, 183, 0, 0.12);
+        border: 1.5px solid rgba(245, 183, 0, 0.45);
+        border-radius: 20px;
+        padding: clamp(2px, 0.6vh, 4px) clamp(10px, 1.6vw, 16px);
+        color: #ffd24d;
+        font-size: clamp(9px, 1.25vw, 11.5px);
+        font-weight: 800;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        margin-bottom: clamp(2px, 0.6vh, 5px);
+        box-shadow: 0 0 14px rgba(245, 183, 0, 0.25);
+      }
+
+      /* Logo Judul Game */
+      .logo-container {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .title-sub {
+        display: block;
+        font-size: clamp(10px, 1.4vw, 13px);
+        font-weight: 800;
+        letter-spacing: clamp(2px, 0.5vw, 4px);
+        color: #48dbfb;
+        text-shadow: 0 0 14px rgba(72, 219, 251, 0.85);
+        text-transform: uppercase;
+        margin-bottom: 1px;
+      }
+      .title-main {
+        display: block;
+        font-size: clamp(18px, 3.2vw, 32px);
+        font-weight: 900;
+        letter-spacing: 1px;
+        color: #ffd700;
+        text-shadow: 0 0 16px rgba(245, 183, 0, 0.75), 0 2px 4px rgba(0, 0, 0, 0.9);
+        text-transform: uppercase;
+        line-height: 1.15;
+      }
+
+      .mission-log-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(14, 20, 36, 0.85);
+        border: 1px solid rgba(72, 219, 251, 0.35);
+        border-radius: 16px;
+        padding: 2px 10px;
+        margin-top: clamp(2px, 0.6vh, 5px);
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+      }
+      .pill-badge {
+        background: #00cec9;
+        color: #000;
+        font-weight: 900;
+        font-size: clamp(8px, 1.05vw, 9.5px);
+        padding: 1px 6px;
+        border-radius: 4px;
+        letter-spacing: 0.5px;
+      }
+      .pill-text {
+        font-size: clamp(9.5px, 1.25vw, 11.5px);
+        color: #f1f5f9;
+        font-weight: 600;
+      }
+
+      /* ===== GRID 2 KOLOM RPG (TENGAH & BAWAH) ===== */
+      .opening-body-grid {
+        display: grid;
+        grid-template-columns: 1.14fr 1fr;
+        gap: clamp(8px, 1.8vh, 14px) clamp(10px, 2vw, 20px);
+        width: 100%;
+        align-items: stretch;
+      }
+
+      /* Pastikan di Semua HP Posisi Landscape Tetap 2 Kolom Sejajar */
+      @media (orientation: landscape) {
+        .opening-body-grid {
+          grid-template-columns: 1.14fr 1fr !important;
+        }
+      }
+
+      /* Panel RPG Berbingkai Khusus */
+      .rpg-panel {
+        position: relative;
+        background: rgba(10, 16, 35, 0.88);
+        border: 1.5px solid rgba(72, 219, 251, 0.55);
+        border-radius: 8px;
+        box-shadow:
+          inset 0 0 14px rgba(72, 219, 251, 0.1),
+          0 4px 16px rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        padding: clamp(10px, 2vh, 14px) clamp(8px, 1.4vw, 14px) clamp(7px, 1.4vh, 10px);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        box-sizing: border-box;
+      }
+
+      /* Aksen 4 Sudut Pixel RPG */
+      .rpg-panel::before {
+        content: "";
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        width: 8px;
+        height: 8px;
+        border-top: 2.5px solid #48dbfb;
+        border-left: 2.5px solid #48dbfb;
+        pointer-events: none;
+      }
+      .rpg-panel::after {
+        content: "";
+        position: absolute;
+        bottom: -2px;
+        right: -2px;
+        width: 8px;
+        height: 8px;
+        border-bottom: 2.5px solid #48dbfb;
+        border-right: 2.5px solid #48dbfb;
+        pointer-events: none;
+      }
+      .rpg-panel .corner-tr {
+        position: absolute;
+        top: -2px;
+        right: -2px;
+        width: 8px;
+        height: 8px;
+        border-top: 2.5px solid #48dbfb;
+        border-right: 2.5px solid #48dbfb;
+        pointer-events: none;
+      }
+      .rpg-panel .corner-bl {
+        position: absolute;
+        bottom: -2px;
+        left: -2px;
+        width: 8px;
+        height: 8px;
+        border-bottom: 2.5px solid #48dbfb;
+        border-left: 2.5px solid #48dbfb;
+        pointer-events: none;
+      }
+
+      /* Lencana Judul Bingkai di Tengah Atas Garis */
+      .panel-header-badge {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #090e20;
+        border: 1.5px solid #48dbfb;
+        border-radius: 14px;
+        padding: 1.5px 14px;
+        font-size: clamp(8px, 1.1vw, 10px);
+        font-weight: 800;
+        letter-spacing: 1.2px;
+        color: #48dbfb;
+        text-transform: uppercase;
+        white-space: nowrap;
+        box-shadow: 0 0 10px rgba(72, 219, 251, 0.45);
+        z-index: 2;
+      }
+
+      /* Panel Kiri: 5 Karakter Pixel Art */
+      .hero-characters {
+        display: flex;
+        justify-content: space-around;
+        align-items: flex-end;
+        width: 100%;
+        gap: clamp(4px, 1vw, 10px);
+        margin-top: 4px;
+      }
+      .char-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-end;
+        flex: 1;
+        transition: transform 0.2s ease;
+      }
+      .char-card:hover {
+        transform: translateY(-3px) scale(1.08);
+      }
+      .char-sprite {
+        width: clamp(28px, 4.2vw, 38px);
+        height: clamp(28px, 4.2vw, 38px);
+        image-rendering: pixelated;
+        filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.8));
+        animation: charBob 2.6s ease-in-out infinite;
+      }
+      .char-card:nth-child(2) .char-sprite { animation-delay: 0.35s; }
+      .char-card:nth-child(3) .char-sprite { animation-delay: 0.7s; }
+      .char-card:nth-child(4) .char-sprite { animation-delay: 1.05s; }
+      .char-card:nth-child(5) .char-sprite { animation-delay: 1.4s; }
+
+      @keyframes charBob {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-4px); }
+      }
+
+      .char-name {
+        font-size: clamp(8px, 1.1vw, 9.5px);
+        color: #cbd5e1;
+        font-weight: 600;
+        margin-top: 4px;
+        text-align: center;
+        white-space: nowrap;
+      }
+      .char-player .char-name {
+        color: #ffd700;
+        font-weight: 800;
+      }
+
+      /* Panel Kanan: Rangkuman Misi Aktif 2x2 Grid */
+      .quest-summary {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: clamp(4px, 0.8vh, 6px);
+        width: 100%;
+        margin-top: 4px;
+      }
+      .quest-pill {
+        background: rgba(16, 22, 42, 0.9);
+        border: 1px solid rgba(245, 183, 0, 0.4);
+        border-radius: 8px;
+        padding: clamp(5px, 0.9vh, 7px) clamp(6px, 1vw, 10px);
+        font-size: clamp(8.5px, 1.15vw, 10.5px);
+        color: #f1f5f9;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .quest-icon {
+        font-size: 11px;
+        flex-shrink: 0;
+      }
+      .quest-pill strong {
+        color: #ffd700;
+      }
+
+      /* Kiri Bawah: Panel Panduan Kontrol */
+      .hero-controls-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        width: 100%;
+        gap: clamp(6px, 1.2vw, 12px);
+        margin-top: 2px;
+      }
+      .h-ctrl-item {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        white-space: nowrap;
+      }
+      .ctrl-icon {
+        font-size: 12px;
+      }
+      .ctrl-key {
+        background: linear-gradient(180deg, #f5b700 0%, #e0a300 100%);
+        color: #000;
+        font-size: 9.5px;
+        font-weight: 900;
+        padding: 1px 6px;
+        border-radius: 4px;
+        box-shadow: 0 1px 0 #9e7300;
+      }
+      .ctrl-desc {
+        font-size: clamp(8.5px, 1.1vw, 10px);
+        color: #cbd5e1;
+      }
+      .ctrl-desc strong {
+        color: #f1f5f9;
+      }
+
+      /* Kanan Bawah: Tombol Mulai Petualangan */
+      .panel-cta {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+      }
+      .hero-start-btn {
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(180deg, #ffe043 0%, #f5b700 45%, #d98200 100%);
+        color: #121212;
+        border: 2px solid #fff5a6;
+        padding: clamp(8px, 1.6vh, 12px) clamp(20px, 3.5vw, 36px);
+        font-size: clamp(13px, 1.8vw, 16.5px);
+        font-weight: 900;
+        letter-spacing: 0.8px;
+        border-radius: 28px;
+        cursor: pointer;
+        box-shadow:
+          0 4px 0 #8c5300,
+          0 0 24px rgba(245, 183, 0, 0.65),
+          inset 0 1px 0 rgba(255, 255, 255, 0.85);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: all 0.15s ease-out;
+        touch-action: manipulation;
+        font-family: inherit;
+        animation: startGlow 2.4s ease-in-out infinite;
+        width: 100%;
+        max-width: 380px;
+        box-sizing: border-box;
+      }
+      .hero-start-btn:hover {
+        transform: translateY(-2px);
+        box-shadow:
+          0 6px 0 #8c5300,
+          0 0 32px rgba(245, 183, 0, 0.85),
+          inset 0 1px 0 rgba(255, 255, 255, 0.95);
+        filter: brightness(1.06);
+      }
+      .hero-start-btn:active {
+        transform: translateY(3px);
+        box-shadow:
+          0 1px 0 #8c5300,
+          0 4px 10px rgba(245, 183, 0, 0.4);
+      }
+      .btn-shine {
+        position: absolute;
+        top: 0;
+        left: -120%;
+        width: 60%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.65), transparent);
+        transform: skewX(-25deg);
+        animation: lightSweep 3.2s infinite;
+      }
+      @keyframes lightSweep {
+        0%, 55% { left: -120%; }
+        100% { left: 220%; }
+      }
+      @keyframes startGlow {
+        0%, 100% { filter: drop-shadow(0 0 8px rgba(245, 183, 0, 0.45)); }
+        50% { filter: drop-shadow(0 0 20px rgba(245, 183, 0, 0.8)); }
+      }
+
+      .hero-subhint {
+        color: #cbd5e1;
+        font-size: clamp(8.5px, 1.1vw, 10px);
+        margin-top: 4px;
+        text-align: center;
+        letter-spacing: 0.3px;
+      }
+
+      /* Responsif Khusus Saat Layar Ponsel Berdiri / Portrait */
+      @media (orientation: portrait) {
+        .opening-body-grid {
+          grid-template-columns: 1fr !important;
+          gap: 10px;
+        }
+      }
+
+      /* Responsif Khusus Mobile Landscape (Tinggi Layar Pendek 320px - 440px) */
+      @media (orientation: landscape) and (max-height: 440px) {
+        .opening-content {
+          gap: 6px;
+        }
+        .hero-tag {
+          font-size: 8.5px;
+          padding: 2px 8px;
+          margin-bottom: 2px;
+        }
+        .title-sub {
+          font-size: 9px;
+          letter-spacing: 2px;
+          margin-bottom: 1px;
+        }
+        .title-main {
+          font-size: 18px;
+          line-height: 1.1;
+        }
+        .mission-log-pill {
+          padding: 1px 7px;
+          margin-top: 2px;
+        }
+        .pill-badge {
+          font-size: 8px;
+          padding: 1px 4px;
+        }
+        .pill-text {
+          font-size: 9px;
+        }
+        .opening-body-grid {
+          gap: 8px 12px;
+        }
+        .rpg-panel {
+          padding: 9px 8px 5px;
+        }
+        .panel-header-badge {
+          font-size: 8px;
+          padding: 1px 9px;
+        }
+        .char-sprite {
+          width: 28px;
+          height: 28px;
+        }
+        .char-name {
+          font-size: 7.5px;
+          margin-top: 1px;
+        }
+        .quest-summary {
+          gap: 3px;
+        }
+        .quest-pill {
+          font-size: 8px;
+          padding: 3px 5px;
+        }
+        .hero-controls-content {
+          gap: 6px;
+        }
+        .ctrl-key {
+          font-size: 8.5px;
+          padding: 1px 4px;
+        }
+        .ctrl-desc {
+          font-size: 8px;
+        }
+        .hero-start-btn {
+          padding: 6px 18px;
+          font-size: 13px;
+        }
+        .hero-subhint {
+          font-size: 8px;
+          margin-top: 2px;
+        }
+      }
+
+      /* Responsif Layar Sangat Sempit / Ultra-pendek (<= 340px) */
+      @media (orientation: landscape) and (max-height: 340px) {
+        .title-main {
+          font-size: 16px;
+        }
+        .char-sprite {
+          width: 24px;
+          height: 24px;
+        }
+        .hero-start-btn {
+          padding: 5px 16px;
+          font-size: 12px;
+        }
+      }
+      /* ===== MODAL KUIS / TANTANGAN BUKA PETI ===== */
+      .quiz-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(5, 5, 18, 0.88);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        z-index: 120;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+      }
+      .quiz-card {
+        background: #141424;
+        border: 2px solid #f5b700;
+        border-radius: 16px;
+        box-shadow:
+          0 10px 30px rgba(0, 0, 0, 0.8),
+          0 0 25px rgba(245, 183, 0, 0.3);
+        max-width: 600px;
+        width: 100%;
+        max-height: 92vh;
+        overflow-y: auto;
+        padding: clamp(16px, 3vw, 24px);
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        animation: popModal 0.2s ease-out;
+      }
+      @keyframes popModal {
+        from {
+          transform: scale(0.92);
+          opacity: 0;
+        }
+        to {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+      .quiz-header {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        border-bottom: 1px solid rgba(245, 183, 0, 0.25);
+        padding-bottom: 10px;
+      }
+      .quiz-badge {
+        display: inline-block;
+        background: #f5b700;
+        color: #000;
+        font-size: 11px;
+        font-weight: 900;
+        letter-spacing: 1px;
+        padding: 3px 8px;
+        border-radius: 4px;
+        align-self: flex-start;
+      }
+      .quiz-header h3 {
+        color: #f5b700;
+        font-size: clamp(18px, 3vw, 22px);
+      }
+      .quiz-question {
+        color: #eee;
+        font-size: clamp(14px, 2.5vw, 16px);
+        line-height: 1.5;
+        font-weight: 500;
+      }
+      .quiz-options {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+      @media (min-width: 500px) and (max-height: 500px) {
+        .quiz-options {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+      .quiz-opt-btn {
+        background: rgba(255, 255, 255, 0.06);
+        border: 1.5px solid rgba(245, 183, 0, 0.35);
+        border-radius: 10px;
+        color: #fff;
+        padding: 10px 14px;
+        text-align: left;
+        font-size: clamp(13px, 2.2vw, 15px);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        transition: all 0.15s;
+        touch-action: manipulation;
+        font-family: inherit;
+      }
+      .quiz-opt-btn:hover {
+        background: rgba(245, 183, 0, 0.15);
+        border-color: #f5b700;
+        transform: translateY(-1px);
+      }
+      .quiz-opt-btn:active {
+        transform: scale(0.98);
+      }
+      .quiz-opt-btn:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+        transform: none !important;
+        border-color: rgba(255, 255, 255, 0.15) !important;
+        background: rgba(255, 255, 255, 0.03) !important;
+      }
+      .quiz-opt-btn .opt-badge {
+        background: #333;
+        color: #f5b700;
+        font-weight: 900;
+        border-radius: 6px;
+        min-width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        flex-shrink: 0;
+      }
+      .quiz-opt-btn.correct {
+        background: rgba(39, 174, 96, 0.4) !important;
+        border-color: #27ae60 !important;
+        box-shadow: 0 0 15px rgba(39, 174, 96, 0.6);
+      }
+      .quiz-opt-btn.wrong {
+        background: rgba(231, 76, 60, 0.4) !important;
+        border-color: #e74c3c !important;
+        animation: shake 0.4s ease-in-out;
+      }
+      @keyframes shake {
+        0%,
+        100% {
+          transform: translateX(0);
+        }
+        25% {
+          transform: translateX(-6px);
+        }
+        75% {
+          transform: translateX(6px);
+        }
+      }
+      .quiz-feedback {
+        font-size: 13px;
+        padding: 8px 12px;
+        border-radius: 8px;
+        line-height: 1.4;
+      }
+      .quiz-feedback.success {
+        background: rgba(39, 174, 96, 0.2);
+        color: #2ecc71;
+        border: 1px solid #27ae60;
+      }
+      .quiz-feedback.error {
+        background: rgba(231, 76, 60, 0.2);
+        color: #ff6b6b;
+        border: 1px solid #e74c3c;
+      }
+      .quiz-footer {
+        display: flex;
+        justify-content: flex-end;
+      }
+      .quiz-cancel-btn {
+        background: transparent;
+        border: none;
+        color: #888;
+        font-size: 13px;
+        cursor: pointer;
+        padding: 4px 8px;
+        font-family: inherit;
+      }
+      .quiz-cancel-btn:hover {
+        color: #bbb;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- ===== OVERLAY WAJIB LANDSCAPE (MOBILE / TABLET) ===== -->
+    <div id="rotateOverlay">
+      <div class="rotate-box">
+        <div class="phone-anim">
+          <div class="phone-icon"></div>
+        </div>
+        <h2>Mode Lanskap Diperlukan</h2>
+        <p>Game ini dirancang untuk posisi <strong>Mendatar (Landscape)</strong>. Silakan putar ponsel atau tablet Anda.</p>
+        <button id="lockLandscapeBtn" class="lock-btn">⛶ Kunci Lanskap & Layar Penuh</button>
+      </div>
+    </div>
+
+    <!-- CANVAS GAME -->
+    <canvas id="game"></canvas>
+    <div id="hint">Klik layar untuk fullscreen • WASD / Tombol sentuh untuk jalan</div>
+
+    <!-- BAR TOMBOL CEPAT DI ATAS -->
+    <div id="top-bar">
+      <button id="soundBtn" class="top-btn" title="Mute/Unmute Musik">🔊</button>
+      <button id="trackerBtn" class="top-btn" title="Daftar Misi">📋 Misi</button>
+      <button id="fullscreenBtn" class="top-btn" title="Layar Penuh">⛶</button>
+    </div>
+
+    <!-- KONTROL VIRTUAL SENTUH (MOBILE / TABLET) -->
+    <div id="virtual-controls">
+      <!-- D-Pad Arah -->
+      <div id="dpad-container">
+        <button class="dpad-btn dpad-up" data-key="w" aria-label="Atas">▲</button>
+        <button class="dpad-btn dpad-left" data-key="a" aria-label="Kiri">◀</button>
+        <div class="dpad-center"></div>
+        <button class="dpad-btn dpad-right" data-key="d" aria-label="Kanan">▶</button>
+        <button class="dpad-btn dpad-down" data-key="s" aria-label="Bawah">▼</button>
+      </div>
+
+      <!-- Tombol Aksi -->
+      <div id="action-container">
+        <button id="actionBtn" class="action-btn" data-key="e" aria-label="Interaksi / Aksi">
+          <span class="action-key">E</span>
+          <span class="action-label">AKSI</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ===== MODAL KUIS / TANTANGAN BUKA PETI ===== -->
+    <div id="quizModal" class="quiz-overlay" style="display: none">
+      <div class="quiz-card">
+        <div class="quiz-header">
+          <span class="quiz-badge">🎮 TEBAK-TEBAKAN BUKA PETI</span>
+          <h3 id="quizTitle">Tantangan Logika Peti</h3>
+        </div>
+        <p id="quizQuestion" class="quiz-question"></p>
+        <div id="quizOptions" class="quiz-options"></div>
+        <div id="quizFeedback" class="quiz-feedback" style="display: none"></div>
+        <div class="quiz-footer">
+          <button id="quizCancelBtn" class="quiz-cancel-btn">✕ Nanti Dulu (Tutup)</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== OPENING SCREEN (HERO RPG TITLE SCREEN) ===== -->
+    <div id="opening">
+      <!-- Background Layers -->
+      <div class="opening-bg-world"></div>
+      <div class="opening-overlay"></div>
+      <div class="opening-grid"></div>
+
+      <!-- Partikel Berpendar -->
+      <div class="opening-particles">
+        <span class="particle p1"></span>
+        <span class="particle p2"></span>
+        <span class="particle p3"></span>
+        <span class="particle p4"></span>
+        <span class="particle p5"></span>
+        <span class="particle p6"></span>
+      </div>
+
+      <div class="opening-content">
+        <!-- BAGIAN ATAS: HEADER TENGAH -->
+        <header class="opening-header">
+          <!-- Lencana Sekolah & Fase -->
+          <div class="hero-tag">
+            <span>🏛️</span>
+            <span>SMA NEGERI 4 YOGYAKARTA • INFORMATIKA FASE E</span>
+          </div>
+
+          <!-- Judul Game: PETUALANGAN DETEKTIF (Biru Menyala) & EKSPLORASI SISTEM OPERASI (Emas Menyala) -->
+          <div class="logo-container">
+            <span class="title-sub">PETUALANGAN DETEKTIF</span>
+            <span class="title-main">EKSPLORASI SISTEM OPERASI</span>
+            <div class="mission-log-pill">
+              <span class="pill-badge">QUEST LOG</span>
+              <span class="pill-text">Jurnal Misi LKPD - Pak Ilyas</span>
+            </div>
+          </div>
+        </header>
+
+        <!-- GRID UTAMA RPG (2 KOLOM SEJAJAR, 2 BARIS) -->
+        <div class="opening-body-grid">
+          <!-- BAGIAN TENGAH: PANEL KIRI (KARAKTER & PETUNJUK) -->
+          <section class="rpg-panel panel-characters">
+            <span class="corner-tr"></span>
+            <span class="corner-bl"></span>
+            <div class="panel-header-badge">KARAKTER & PETUNJUK</div>
+            <div class="hero-characters">
+              <div class="char-card char-player">
+                <img src="assets/tiles/characters/karakter_depan.png" alt="Detektif Kamu" class="char-sprite" />
+                <span class="char-name">Detektif (Kamu)</span>
+              </div>
+              <div class="char-card">
+                <img src="assets/tiles/characters/npc/npc_girl.png" alt="Sinta" class="char-sprite" />
+                <span class="char-name">Sinta</span>
+              </div>
+              <div class="char-card">
+                <img src="assets/props/chest_locked.png" alt="Peti Misi" class="char-sprite" />
+                <span class="char-name">Peti Misi</span>
+              </div>
+              <div class="char-card">
+                <img src="assets/tiles/characters/npc/npc_guard.png" alt="Pak Satpam" class="char-sprite" />
+                <span class="char-name">Pak Satpam</span>
+              </div>
+              <div class="char-card">
+                <img src="assets/tiles/characters/npc/npc_oldman.png" alt="Kakek IT" class="char-sprite" />
+                <span class="char-name">Kakek IT</span>
+              </div>
+            </div>
+          </section>
+
+          <!-- BAGIAN TENGAH: PANEL KANAN (MISI AKTIF 2x2) -->
+          <section class="rpg-panel panel-missions">
+            <span class="corner-tr"></span>
+            <span class="corner-bl"></span>
+            <div class="panel-header-badge">MISI AKTIF</div>
+            <div class="quest-summary">
+              <div class="quest-pill">
+                <span class="quest-icon">📜</span>
+                <span><strong>Misi 1:</strong> Booting & POST</span>
+              </div>
+              <div class="quest-pill">
+                <span class="quest-icon">📜</span>
+                <span><strong>Misi 2:</strong> Lapisan Bawang</span>
+              </div>
+              <div class="quest-pill">
+                <span class="quest-icon">📜</span>
+                <span><strong>Misi 3:</strong> 4 Jenis OS</span>
+              </div>
+              <div class="quest-pill">
+                <span class="quest-icon">📜</span>
+                <span><strong>Misi 4:</strong> 5 Peran Utama OS</span>
+              </div>
+            </div>
+          </section>
+
+          <!-- BAGIAN BAWAH: KIRI BAWAH (PANDUAN KONTROL) -->
+          <section class="rpg-panel panel-controls">
+            <span class="corner-tr"></span>
+            <span class="corner-bl"></span>
+            <div class="panel-header-badge">PANDUAN KONTROL</div>
+            <div class="hero-controls-content">
+              <div class="h-ctrl-item">
+                <span class="ctrl-icon">⌨️</span>
+                <span class="ctrl-desc"><strong>WASD / D-Pad:</strong> Bergerak</span>
+              </div>
+              <div class="h-ctrl-item">
+                <span class="ctrl-key">E</span>
+                <span class="ctrl-desc"><strong>E:</strong> Tombol Aksi (Buka Peti)</span>
+              </div>
+              <div class="h-ctrl-item">
+                <span class="ctrl-key">M</span>
+                <span class="ctrl-desc"><strong>M:</strong> Musik ON/OFF</span>
+              </div>
+            </div>
+          </section>
+
+          <!-- BAGIAN BAWAH: KANAN BAWAH (TOMBOL MULAI & BANTUAN) -->
+          <div class="panel-cta">
+            <button id="startBtn" class="hero-start-btn">
+              <span class="btn-shine"></span>
+              <span>🎮</span>
+              <span>MULAI PETUALANGAN</span>
+              <span>▶</span>
+            </button>
+            <p class="hero-subhint">Sentuh tombol untuk memulai petualangan detektif</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="src/main.js"></script>
+  </body>
+</html>

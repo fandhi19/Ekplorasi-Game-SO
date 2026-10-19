@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Generator Kunci — Perak & Tembaga</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: #1a1a2e;
+        color: #eee;
+        padding: 30px;
+        margin: 0;
+        min-height: 100vh;
+      }
+      h1 {
+        color: #f5b700;
+        text-align: center;
+        margin-bottom: 10px;
+      }
+      .subtitle {
+        text-align: center;
+        color: #888;
+        margin-bottom: 30px;
+        font-size: 14px;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 24px;
+        max-width: 900px;
+        margin: 0 auto;
+      }
+      .card {
+        background: #2a2a3e;
+        padding: 24px;
+        border-radius: 12px;
+        border: 1px solid #3a3a4e;
+        text-align: center;
+      }
+      .card h2 {
+        margin-top: 0;
+        font-size: 18px;
+      }
+      .card .desc {
+        color: #888;
+        font-size: 13px;
+        margin-bottom: 15px;
+        line-height: 1.5;
+      }
+      canvas {
+        background: repeating-conic-gradient(#333 0% 25%, #444 0% 50%) 50% / 16px 16px;
+        border: 1px solid #555;
+        border-radius: 6px;
+        image-rendering: pixelated;
+        max-width: 100%;
+        display: block;
+        margin: 0 auto 15px;
+      }
+      button {
+        background: #f5b700;
+        color: #000;
+        border: none;
+        padding: 12px 24px;
+        font-size: 15px;
+        font-weight: bold;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s;
+        width: 100%;
+      }
+      button:hover {
+        background: #ffd700;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(245, 183, 0, 0.3);
+      }
+      button:active {
+        transform: translateY(0);
+      }
+      .footer {
+        text-align: center;
+        margin-top: 30px;
+        color: #666;
+        font-size: 13px;
+      }
+      code {
+        background: #1a1a2e;
+        padding: 2px 6px;
+        border-radius: 4px;
+        color: #f5b700;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>🔑 Generator Kunci</h1>
+    <p class="subtitle">Kunci Perak (UKS) & Kunci Tembaga (Kelas A) — 64×64 px</p>
+
+    <div class="grid">
+      <div class="card">
+        <h2 style="color: #c0c0c0">🥈 Kunci Perak</h2>
+        <div class="desc">
+          Tersembunyi di <b>UKS</b><br />
+          Membuka peti di <b>Kelas A</b>
+        </div>
+        <canvas id="silverCanvas" width="64" height="64" style="width: 224px; height: 224px"></canvas>
+        <button onclick="download('silverCanvas', 'key_silver.png')">⬇ Download key_silver.png</button>
+      </div>
+
+      <div class="card">
+        <h2 style="color: #b87333">🟤 Kunci Tembaga</h2>
+        <div class="desc">
+          Tersembunyi di <b>Kelas A</b><br />
+          Membuka peti di <b>Perpustakaan</b>
+        </div>
+        <canvas id="copperCanvas" width="64" height="64" style="width: 224px; height: 224px"></canvas>
+        <button onclick="download('copperCanvas', 'key_copper.png')">⬇ Download key_copper.png</button>
+      </div>
+    </div>
+
+    <div class="footer">Taruh di <code>assets/props/</code> setelah download</div>
+
+    <script>
+      // ============================================================
+      // FUNGSI GAMBAR KUNCI (parameter: warna)
+      // ============================================================
+      function drawKey(canvasId, colors) {
+        const c = document.getElementById(canvasId);
+        const ctx = c.getContext("2d");
+        ctx.clearRect(0, 0, 64, 64);
+        ctx.imageSmoothingEnabled = false;
+
+        const {
+          main, // warna utama
+          dark, // warna outline/gelap
+          hole, // warna lubang kunci
+          hi, // highlight (biasanya putih transparan)
+        } = colors;
+
+        // ===== Kepala kunci =====
+        ctx.fillStyle = main;
+        ctx.beginPath();
+        ctx.arc(24, 32, 14, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.strokeStyle = dark;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(24, 32, 14, 0, Math.PI * 2);
+        ctx.stroke();
+
+        // Highlight atas kepala
+        ctx.fillStyle = hi;
+        ctx.beginPath();
+        ctx.arc(20, 27, 5, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Lubang kepala
+        ctx.fillStyle = hole;
+        ctx.beginPath();
+        ctx.arc(24, 32, 5, 0, Math.PI * 2);
+        ctx.fill();
+
+        // ===== Badan kunci =====
+        ctx.fillStyle = main;
+        ctx.fillRect(36, 28, 22, 8);
+
+        ctx.strokeStyle = dark;
+        ctx.lineWidth = 2;
+        ctx.strokeRect(36, 28, 22, 8);
+
+        // Highlight badan
+        ctx.fillStyle = hi;
+        ctx.fillRect(38, 29, 18, 2);
+
+        // ===== Gigi kunci =====
+        ctx.fillStyle = main;
+        ctx.fillRect(48, 36, 4, 8);
+        ctx.fillRect(54, 36, 4, 8);
+
+        ctx.strokeStyle = dark;
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(48, 36, 4, 8);
+        ctx.strokeRect(54, 36, 4, 8);
+
+        // ===== Aksen kecil di badan kunci (biar beda per kunci) =====
+        ctx.fillStyle = dark;
+        ctx.fillRect(42, 30, 3, 4);
+        ctx.fillRect(50, 30, 3, 4);
+      }
+
+      // ============================================================
+      // PALET WARNA PER KUNCI
+      // ============================================================
+
+      // Kunci Perak — nuansa putih metalik
+      const SILVER = {
+        main: "#C0C0C0",
+        dark: "#707070",
+        hole: "#2a2a3a",
+        hi: "rgba(255, 255, 255, 0.7)",
+      };
+
+      // Kunci Tembaga — nuansa coklat kemerahan
+      const COPPER = {
+        main: "#B87333",
+        dark: "#7A4A1A",
+        hole: "#2a1a05",
+        hi: "rgba(255, 220, 180, 0.5)",
+      };
+
+      // ============================================================
+      // DRAW
+      // ============================================================
+      drawKey("silverCanvas", SILVER);
+      drawKey("copperCanvas", COPPER);
+
+      // ============================================================
+      // DOWNLOAD
+      // ============================================================
+      function download(canvasId, filename) {
+        const canvas = document.getElementById(canvasId);
+        canvas.toBlob((blob) => {
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = filename;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        }, "image/png");
+      }
+    </script>
+  </body>
+</html>
