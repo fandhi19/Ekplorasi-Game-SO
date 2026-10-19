@@ -30,6 +30,8 @@ function resize() {
 }
 window.addEventListener("resize", resize);
 window.addEventListener("orientationchange", () => setTimeout(resize, 200));
+document.addEventListener("fullscreenchange", () => setTimeout(resize, 150));
+document.addEventListener("webkitfullscreenchange", () => setTimeout(resize, 150));
 
 const hint = document.getElementById("hint");
 if (hint) {
@@ -355,11 +357,17 @@ if (trackerBtn) {
   });
 }
 
-// ===== LOCK / REQUEST LANDSCAPE MODE =====
+// ===== LOCK / REQUEST LANDSCAPE & FULLSCREEN MODE =====
 async function requestLandscape() {
   try {
-    if (!document.fullscreenElement && document.documentElement.requestFullscreen) {
-      await document.documentElement.requestFullscreen();
+    const doc = document;
+    const docEl = doc.documentElement;
+    const isFS = doc.fullscreenElement || doc.webkitFullscreenElement || doc.mozFullScreenElement || doc.msFullscreenElement;
+    if (!isFS) {
+      const req = docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.mozRequestFullScreen || docEl.msRequestFullscreen;
+      if (req) {
+        await req.call(docEl);
+      }
     }
   } catch (err) {}
 
@@ -368,7 +376,27 @@ async function requestLandscape() {
       await screen.orientation.lock("landscape");
     }
   } catch (err) {}
+
+  try {
+    window.scrollTo(0, 1);
+  } catch (err) {}
 }
+
+// Aktifkan Fullscreen secara otomatis pada sentuhan atau klik pertama dari awal game
+function onFirstUserGesture() {
+  requestLandscape();
+  window.removeEventListener("pointerdown", onFirstUserGesture);
+  window.removeEventListener("touchstart", onFirstUserGesture);
+  window.removeEventListener("click", onFirstUserGesture);
+}
+window.addEventListener("pointerdown", onFirstUserGesture, { passive: true });
+window.addEventListener("touchstart", onFirstUserGesture, { passive: true });
+window.addEventListener("click", onFirstUserGesture, { passive: true });
+
+// Coba langsung saat halaman dibuka
+try {
+  requestLandscape();
+} catch (e) {}
 
 const lockLandscapeBtn = document.getElementById("lockLandscapeBtn");
 if (lockLandscapeBtn) {
