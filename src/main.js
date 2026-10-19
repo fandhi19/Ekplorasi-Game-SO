@@ -358,22 +358,23 @@ if (trackerBtn) {
 }
 
 // ===== LOCK / REQUEST LANDSCAPE & FULLSCREEN MODE =====
-async function requestLandscape() {
-  try {
-    const doc = document;
-    const docEl = doc.documentElement;
-    const isFS = doc.fullscreenElement || doc.webkitFullscreenElement || doc.mozFullScreenElement || doc.msFullscreenElement;
-    if (!isFS) {
-      const req = docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.mozRequestFullScreen || docEl.msRequestFullscreen;
-      if (req) {
-        await req.call(docEl);
-      }
+function requestLandscape() {
+  const doc = document;
+  const docEl = doc.documentElement;
+  const isFS = doc.fullscreenElement || doc.webkitFullscreenElement || doc.mozFullScreenElement || doc.msFullscreenElement;
+  if (!isFS) {
+    const req = docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.mozRequestFullScreen || docEl.msRequestFullscreen;
+    if (req) {
+      try {
+        const p = req.call(docEl);
+        if (p && p.catch) p.catch(() => {});
+      } catch (err) {}
     }
-  } catch (err) {}
+  }
 
   try {
     if (screen.orientation && screen.orientation.lock) {
-      await screen.orientation.lock("landscape");
+      screen.orientation.lock("landscape").catch(() => {});
     }
   } catch (err) {}
 
@@ -382,21 +383,51 @@ async function requestLandscape() {
   } catch (err) {}
 }
 
-// Aktifkan Fullscreen secara otomatis pada sentuhan atau klik pertama dari awal game
-function onFirstUserGesture() {
-  requestLandscape();
-  window.removeEventListener("pointerdown", onFirstUserGesture);
-  window.removeEventListener("touchstart", onFirstUserGesture);
-  window.removeEventListener("click", onFirstUserGesture);
+// Kontrol tombol Layar Penuh pada Opening Screen & Top Bar
+const openingFsBtn = document.getElementById("openingFsBtn");
+function updateFullscreenUI() {
+  const isFS = !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement);
+  if (openingFsBtn) {
+    openingFsBtn.style.display = isFS ? "none" : "inline-flex";
+  }
+  if (fullscreenBtn) {
+    fullscreenBtn.textContent = isFS ? "🗗" : "⛶";
+  }
 }
-window.addEventListener("pointerdown", onFirstUserGesture, { passive: true });
-window.addEventListener("touchstart", onFirstUserGesture, { passive: true });
-window.addEventListener("click", onFirstUserGesture, { passive: true });
 
-// Coba langsung saat halaman dibuka
-try {
+document.addEventListener("fullscreenchange", updateFullscreenUI);
+document.addEventListener("webkitfullscreenchange", updateFullscreenUI);
+document.addEventListener("mozfullscreenchange", updateFullscreenUI);
+document.addEventListener("MSFullscreenChange", updateFullscreenUI);
+
+if (openingFsBtn) {
+  openingFsBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    requestLandscape();
+  });
+  openingFsBtn.addEventListener("touchend", (e) => {
+    e.stopPropagation();
+    requestLandscape();
+  });
+}
+
+// Aktifkan Layar Penuh otomatis pada sentuhan atau ketukan apapun di opening
+const opening = document.getElementById("opening");
+if (opening) {
+  opening.addEventListener("click", () => {
+    requestLandscape();
+  });
+  opening.addEventListener("touchend", () => {
+    requestLandscape();
+  }, { passive: true });
+}
+
+// Fallback gesture global pada jendela
+function onGlobalUserGesture() {
   requestLandscape();
-} catch (e) {}
+}
+window.addEventListener("click", onGlobalUserGesture, { passive: true });
+window.addEventListener("touchend", onGlobalUserGesture, { passive: true });
 
 const lockLandscapeBtn = document.getElementById("lockLandscapeBtn");
 if (lockLandscapeBtn) {
@@ -417,7 +448,6 @@ if (fullscreenBtn) {
 }
 
 // ===== OPENING SCREEN HANDLER =====
-const opening = document.getElementById("opening");
 const startBtn = document.getElementById("startBtn");
 
 if (startBtn) {
