@@ -176,7 +176,7 @@
         display: flex;
         gap: 8px;
         z-index: 30;
-      } 
+      }
       .top-btn {
         background: rgba(18, 18, 30, 0.85);
         border: 1.5px solid rgba(245, 183, 0, 0.45);
@@ -346,7 +346,8 @@
         animation: pulseExitBtn 1.2s ease-in-out infinite;
       }
       @keyframes pulseExitBtn {
-        0%, 100% {
+        0%,
+        100% {
           transform: scale(1);
           filter: drop-shadow(0 0 8px rgba(245, 183, 0, 0.6));
         }
@@ -420,9 +421,7 @@
       .opening-grid {
         position: absolute;
         inset: 0;
-        background-image:
-          linear-gradient(rgba(245, 183, 0, 0.05) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(245, 183, 0, 0.05) 1px, transparent 1px);
+        background-image: linear-gradient(rgba(245, 183, 0, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(245, 183, 0, 0.05) 1px, transparent 1px);
         background-size: 38px 38px;
         z-index: 3;
         pointer-events: none;
@@ -442,18 +441,64 @@
         background: radial-gradient(circle, rgba(255, 215, 0, 0.8) 0%, rgba(255, 215, 0, 0) 70%);
         animation: floatUp 8s linear infinite;
       }
-      .p1 { width: 8px; height: 8px; left: 12%; animation-duration: 9s; animation-delay: 0s; }
-      .p2 { width: 5px; height: 5px; left: 28%; animation-duration: 7s; animation-delay: 2s; }
-      .p3 { width: 10px; height: 10px; left: 52%; animation-duration: 11s; animation-delay: 1s; }
-      .p4 { width: 6px; height: 6px; left: 74%; animation-duration: 8.5s; animation-delay: 3s; }
-      .p5 { width: 7px; height: 7px; left: 88%; animation-duration: 10s; animation-delay: 1.5s; }
-      .p6 { width: 4px; height: 4px; left: 40%; animation-duration: 6.5s; animation-delay: 4s; }
+      .p1 {
+        width: 8px;
+        height: 8px;
+        left: 12%;
+        animation-duration: 9s;
+        animation-delay: 0s;
+      }
+      .p2 {
+        width: 5px;
+        height: 5px;
+        left: 28%;
+        animation-duration: 7s;
+        animation-delay: 2s;
+      }
+      .p3 {
+        width: 10px;
+        height: 10px;
+        left: 52%;
+        animation-duration: 11s;
+        animation-delay: 1s;
+      }
+      .p4 {
+        width: 6px;
+        height: 6px;
+        left: 74%;
+        animation-duration: 8.5s;
+        animation-delay: 3s;
+      }
+      .p5 {
+        width: 7px;
+        height: 7px;
+        left: 88%;
+        animation-duration: 10s;
+        animation-delay: 1.5s;
+      }
+      .p6 {
+        width: 4px;
+        height: 4px;
+        left: 40%;
+        animation-duration: 6.5s;
+        animation-delay: 4s;
+      }
 
       @keyframes floatUp {
-        0% { transform: translateY(105vh) scale(0.6); opacity: 0; }
-        25% { opacity: 0.85; }
-        80% { opacity: 0.85; }
-        100% { transform: translateY(-20px) scale(1.3); opacity: 0; }
+        0% {
+          transform: translateY(105vh) scale(0.6);
+          opacity: 0;
+        }
+        25% {
+          opacity: 0.85;
+        }
+        80% {
+          opacity: 0.85;
+        }
+        100% {
+          transform: translateY(-20px) scale(1.3);
+          opacity: 0;
+        }
       }
 
       /* Konten Utama Opening */
@@ -525,7 +570,9 @@
         font-weight: 900;
         letter-spacing: 1px;
         color: #ffd700;
-        text-shadow: 0 0 16px rgba(245, 183, 0, 0.75), 0 2px 4px rgba(0, 0, 0, 0.9);
+        text-shadow:
+          0 0 16px rgba(245, 183, 0, 0.75),
+          0 2px 4px rgba(0, 0, 0, 0.9);
         text-transform: uppercase;
         line-height: 1.15;
       }
@@ -681,14 +728,27 @@
         filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.8));
         animation: charBob 2.6s ease-in-out infinite;
       }
-      .char-card:nth-child(2) .char-sprite { animation-delay: 0.35s; }
-      .char-card:nth-child(3) .char-sprite { animation-delay: 0.7s; }
-      .char-card:nth-child(4) .char-sprite { animation-delay: 1.05s; }
-      .char-card:nth-child(5) .char-sprite { animation-delay: 1.4s; }
+      .char-card:nth-child(2) .char-sprite {
+        animation-delay: 0.35s;
+      }
+      .char-card:nth-child(3) .char-sprite {
+        animation-delay: 0.7s;
+      }
+      .char-card:nth-child(4) .char-sprite {
+        animation-delay: 1.05s;
+      }
+      .char-card:nth-child(5) .char-sprite {
+        animation-delay: 1.4s;
+      }
 
       @keyframes charBob {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-4px); }
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-4px);
+        }
       }
 
       .char-name {
@@ -830,12 +890,22 @@
         animation: lightSweep 3.2s infinite;
       }
       @keyframes lightSweep {
-        0%, 55% { left: -120%; }
-        100% { left: 220%; }
+        0%,
+        55% {
+          left: -120%;
+        }
+        100% {
+          left: 220%;
+        }
       }
       @keyframes startGlow {
-        0%, 100% { filter: drop-shadow(0 0 8px rgba(245, 183, 0, 0.45)); }
-        50% { filter: drop-shadow(0 0 20px rgba(245, 183, 0, 0.8)); }
+        0%,
+        100% {
+          filter: drop-shadow(0 0 8px rgba(245, 183, 0, 0.45));
+        }
+        50% {
+          filter: drop-shadow(0 0 20px rgba(245, 183, 0, 0.8));
+        }
       }
 
       .hero-subhint {
