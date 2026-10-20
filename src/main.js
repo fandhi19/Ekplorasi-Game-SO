@@ -13,7 +13,6 @@ import { initBGM, toggleMuteBGM, isBGMMuted, playFootstep, initAudioContext, pla
 import { setupVirtualControls } from "./input.js";
 import { initQuizListeners } from "./quiz.js";
 
-
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
@@ -97,7 +96,6 @@ window.addEventListener("keydown", (e) => {
     console.log("DEBUG_MODE:", window.DEBUG_MODE);
   }
 });
-
 
 // ===== LOADING ASET =====
 async function init() {
@@ -329,7 +327,6 @@ init();
 setupVirtualControls(); // ← aktifkan kontrol sentuh mobile & tablet
 initQuizListeners(); // ← aktifkan modal kuis tantangan buka peti
 
-
 // ===== TOP QUICK BAR HANDLERS =====
 const soundBtn = document.getElementById("soundBtn");
 const trackerBtn = document.getElementById("trackerBtn");
@@ -409,9 +406,13 @@ if (opening) {
   opening.addEventListener("click", () => {
     requestLandscape();
   });
-  opening.addEventListener("touchend", () => {
-    requestLandscape();
-  }, { passive: true });
+  opening.addEventListener(
+    "touchend",
+    () => {
+      requestLandscape();
+    },
+    { passive: true },
+  );
 }
 
 // Fallback gesture global pada jendela
@@ -457,7 +458,6 @@ if (startBtn) {
   });
 }
 
-
 // ===== MUTE BGM (tombol M) =====
 window.addEventListener("keydown", (e) => {
   if (e.key.toLowerCase() === "m") {
@@ -466,4 +466,3 @@ window.addEventListener("keydown", (e) => {
     console.log(muted ? "🔇 BGM dimatikan" : "🔊 BGM dinyalakan");
   }
 });
-
