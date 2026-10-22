@@ -46,7 +46,7 @@ export const clues = [
     w: 64,
     h: 64,
     title: "Pak Satpam (Petunjuk Denah Misi)",
-    text: "Halo murid-murid hebat! Bapak berikan rute eksplorasi sekolah agar LKPD-mu selesai tepat waktu:\n\n1. Ruang Kelas A (Pintu Tengah): Lokasi MISI 1 (Pengertian OS & 5 Langkah Booting).\n2. Perpustakaan (Pintu Kanan Atas): Lokasi MISI 2 (Model Lapisan Bawang).\n3. Ruang Kelas B (Pintu Kiri Atas): Lokasi MISI 3 (4 Jenis Sistem Operasi).\n4. Ruang Kantin: Lokasi MISI 4 (5 Peran Utama Di Balik Layar OS).\n5. Ruang UKS & Kantor: Lokasi Klinik Masalah OS & Refleksi Akhir.\n\nAyo segera mulai dari Ruang Kelas A!",
+    text: "Halo murid-murid hebat! Bapak berikan rute eksplorasi sekolah agar LKPD-mu selesai tepat waktu:\n\n1. Ruang Kelas A (Pintu Tengah): Lokasi MISI 1 (Pengertian OS & 5 Langkah Booting).\n2. Perpustakaan (Pintu Kanan Atas): Lokasi MISI 2 (Model Lapisan Bawang).\n3. Ruang Kelas B (Pintu Kiri Atas): Lokasi MISI 3 (4 Jenis Sistem Operasi).\n4. Ruang Kantin: Lokasi MISI 4 (5 Peran Utama Di Balik Layar OS).\n5. Ruang Kantor Sekolah: Lokasi Panduan Refleksi Mandiri & Penyelesaian Quest (Halaman 7).\n\nAyo segera mulai dari Ruang Kelas A!",
   },
   {
     id: "npc-oldman",
@@ -323,80 +323,7 @@ export const clues = [
   },
 
   // ============================================================
-  // AREA 6: RUANG UKS — KLINIK TROUBLESHOOTING SISTEM OPERASI
-  // Pengayaan Kontekstual Masalah Sistem Komputer (Buku Saku Hal. 11)
-  // ============================================================
-  {
-    id: "ranjang-hang",
-    type: "item",
-    itemStyle: "medical",
-    scene: "uks",
-    category: "Troubleshooting: Hang / Freeze",
-    x: 260,
-    y: 340,
-    w: 64,
-    h: 64,
-    title: "Pasien 1: Aplikasi Membeku (Hang / Freeze)",
-    text: '[KLINIK TROUBLESHOOTING SO — Kasus 1]\n• Masalah: HANG / FREEZE (NOT RESPONDING)\n• Gejala: Tampilan aplikasi membeku dan kursor tidak bisa diklik.\n• Penyebab: Aplikasi memproses beban terlalu berat atau mengalami bug sehingga gagal membalas sinyal panggilan Sistem Operasi.\n• Solusi: Buka utilitas Task Manager (Ctrl + Shift + Esc di Windows), pilih aplikasi yang macet, lalu tekan "End Task" agar SO menghentikan proses tersebut dan membebaskan RAM.',
-  },
-  {
-    id: "ranjang-deadlock",
-    type: "item",
-    itemStyle: "medical",
-    scene: "uks",
-    category: "Troubleshooting: Deadlock",
-    x: 260,
-    y: 660,
-    w: 64,
-    h: 64,
-    title: "Pasien 2: Saling Mengunci (Deadlock)",
-    text: "[KLINIK TROUBLESHOOTING SO — Kasus 2]\n• Masalah: DEADLOCK (SALING MENGUNCI)\n• Gejala: Dua atau lebih program berhenti total di saat bersamaan.\n• Penyebab: Aplikasi A dan Aplikasi B saling menunggu sumber daya (RAM/file) yang sedang dipakai satu sama lain, seperti 2 mobil berhadapan di jembatan sempit.\n• Solusi: Buka Task Manager, hentikan paksa salah satu aplikasi (End Task) agar sumber daya yang terkunci terlepas.",
-  },
-  {
-    id: "meja-thrashing",
-    type: "item",
-    itemStyle: "medical",
-    scene: "uks",
-    category: "Troubleshooting: Thrashing",
-    x: 1480,
-    y: 380,
-    w: 64,
-    h: 64,
-    title: "Pasien 3: Komputer Lola (Thrashing)",
-    text: '[KLINIK TROUBLESHOOTING SO — Kasus 3]\n• Masalah: THRASHING (KEHABISAN RAM)\n• Gejala: Komputer menjadi sangat lambat ("lola") dan lag parah saat pindah aplikasi.\n• Penyebab: Terlalu banyak aplikasi berat dibuka melampaui kapasitas RAM, membuat SO sibuk memindahkan data bolak-balik antara RAM dan SSD/HDD (Paging berlebihan).\n• Solusi: Tutup aplikasi berat yang tidak digunakan, matikan program startup, atau tambah kapasitas RAM fisik.',
-  },
-  {
-    id: "meja-driver",
-    type: "item",
-    itemStyle: "medical",
-    scene: "uks",
-    category: "Troubleshooting: Driver Hardware",
-    x: 1550,
-    y: 680,
-    w: 64,
-    h: 64,
-    title: "Pasien 4: Driver Hardware",
-    text: "[KLINIK TROUBLESHOOTING SO — Kasus 4]\n• Masalah: MASALAH DRIVER HARDWARE\n• Gejala: Printer baru tidak terdeteksi, suara speaker hilang, atau Wi-Fi mati.\n• Penyebab: Sistem Operasi belum memiliki atau kehilangan program penerjemah (Device Driver) yang cocok untuk perangkat keras tersebut.\n• Solusi: Pasang (install) driver resmi dari situs web vendor perangkat keras atau update melalui Device Manager / Windows Update.",
-  },
-  {
-    id: "kunci-perak",
-    type: "key",
-    sprite: "key_silver",
-    scene: "uks",
-    keyId: "kunci-perak",
-    hidden: true,
-    hiddenRange: 320,
-    revealRange: 130,
-    x: 500,
-    y: 550,
-    w: 64,
-    h: 64,
-    title: "Kunci Perak Penjelajah",
-    text: "Kamu menemukan Kunci Perak yang terselip di samping kasur UKS!\nLengkapi penjelajahanmu dengan mengunjungi Ruang Kantor Sekolah!",
-  },
-
-  // ============================================================
-  // AREA 7: KANTOR SEKOLAH — REFLEKSI & PENYELESAIAN LKPD
+  // AREA 6: KANTOR SEKOLAH — REFLEKSI & PENYELESAIAN LKPD
   // LKPD Halaman 7 · Alokasi 5 Menit
   // ============================================================
   {
@@ -415,5 +342,21 @@ export const clues = [
     },
     title: "Peti Master: Panduan Refleksi Halaman 7",
     text: '🏆 SELAMAT! KAMU TELAH MENYELESAIKAN SELURUH EKSPLORASI GAME!\n\n"Hardware memberi komputer raga, Sistem Operasi memberinya nyawa untuk melayani manusia."\n— Ilyas Fandhi Anggara, S.Kom\n\n📌 Panduan Mengisi LKPD Halaman 7 (Refleksi Mandiri):\n1. Soal 1 (Refleksimu):\nTuliskan bagian mana di dalam game yang menurutmu paling seru atau paling membantumu memahami Sistem Operasi (misalnya: simulasi Round Robin di Kantin, analogi restoran di Perpus, atau tebak-tebakan peti).\n2. Soal 2 (Temuan Barumu):\nTuliskan 1 hal baru yang baru kamu ketahui hari ini (misalnya: tahap POST, peran Shell, atau konsep Time Sharing CPU).\n\n📌 Checklist Refleksi LKPD:\n[✓] Sudah menyelesaikan seluruh 4 misi di dalam game\n[✓] Sudah melengkapi semua jawaban di LKPD ini\n[✓] Sudah menuliskan refleksi mandiri dengan jujur\n[✓] Sudah memahami peran tiap komponen & dinamika sistem operasi\n\nSilakan kumpulkan lembar LKPD cetakmu ke Pak Ilyas!',
+  },
+  {
+    id: "kunci-perak",
+    type: "key",
+    sprite: "key_silver",
+    scene: "kantor",
+    keyId: "kunci-perak",
+    hidden: true,
+    hiddenRange: 320,
+    revealRange: 130,
+    x: 1450,
+    y: 350,
+    w: 64,
+    h: 64,
+    title: "Kunci Perak Penjelajah",
+    text: "Kamu menemukan Kunci Perak yang berkilau di Ruang Kantor Sekolah!\nSelamat, kamu telah mengoleksi seluruh Kunci Penjelajah Sistem Operasi!",
   },
 ];
