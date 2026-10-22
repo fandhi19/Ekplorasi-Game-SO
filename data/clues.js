@@ -20,7 +20,7 @@ export const clues = [
     w: 86,
     h: 118,
     title: "Papan Eksplorasi: Jurnal Misi LKPD",
-    text: 'Selamat Datang di Game Eksplorasi Sistem Operasi SMA Negeri 4 Yogyakarta!\n\n"Hardware memberi komputer raga, Sistem Operasi memberinya nyawa untuk melayani manusia."\n— Ilyas Fandhi Anggara, S.Kom\n\n📋 Petunjuk Main (Aturan Jurnal Misi LKPD):\n1. Buka lembar cetak LKPD Sistem Komputer & Sistem Operasi milikmu.\n2. Game ini adalah Quest Log eksplorasimu. Terdapat 4 Misi Utama yang harus kamu selesaikan:\n   • MISI 1: Pengertian OS & Tahapan Booting (Ruang Kelas A)\n   • MISI 2: Model Lapisan Bawang / Onion Layer (Perpustakaan)\n   • MISI 3: Berburu 4 Jenis Sistem Operasi (Ruang Kelas B)\n   • MISI 4: Di Balik Layar 5 Peran Utama OS (Ruang Kantin)\n   • REFLEKSI: Panduan Refleksi Mandiri (Ruang Kantor Sekolah)\n\nTemui Sinta di sebelah kiri untuk mendapatkan petunjuk awal Misi 1!',
+    text: 'Selamat Datang di Game Eksplorasi Sistem Operasi SMA Negeri 4 Yogyakarta!\n\n"Hardware memberi komputer raga, Sistem Operasi memberinya nyawa untuk melayani manusia."\n— Ilyas Fandhi Anggara, S.Kom\n\n📋 Petunjuk Main (Aturan Jurnal Misi LKPD):\n1. Buka lembar cetak LKPD Sistem Komputer & Sistem Operasi milikmu.\n2. Game ini adalah Quest Log eksplorasimu. Terdapat 4 Misi Utama yang harus kamu selesaikan:\n   • MISI 1: Pengertian OS & Tahapan Booting (Ruang Kelas A)\n   • MISI 2: Model Lapisan Bawang / Onion Layer (Perpustakaan)\n   • MISI 3: Berburu 4 Jenis Sistem Operasi (Ruang Kelas B)\n   • MISI 4: Di Balik Layar 5 Peran Utama OS (Ruang Kantin)\n   • POSKO UKS: Bantuan Tips LKPD, P3K Komputer & Ergonomi Kesehatan\n   • REFLEKSI: Panduan Refleksi Mandiri (Ruang Kantor Sekolah)\n\nTemui Sinta di sebelah kiri untuk mendapatkan petunjuk awal Misi 1!',
   },
   {
     id: "npc-sinta",
@@ -46,7 +46,7 @@ export const clues = [
     w: 64,
     h: 64,
     title: "Pak Satpam (Petunjuk Denah Misi)",
-    text: "Halo murid-murid hebat! Bapak berikan rute eksplorasi sekolah agar LKPD-mu selesai tepat waktu:\n\n1. Ruang Kelas A (Pintu Tengah): Lokasi MISI 1 (Pengertian OS & 5 Langkah Booting).\n2. Perpustakaan (Pintu Kanan Atas): Lokasi MISI 2 (Model Lapisan Bawang).\n3. Ruang Kelas B (Pintu Kiri Atas): Lokasi MISI 3 (4 Jenis Sistem Operasi).\n4. Ruang Kantin: Lokasi MISI 4 (5 Peran Utama Di Balik Layar OS).\n5. Ruang Kantor Sekolah: Lokasi Panduan Refleksi Mandiri & Penyelesaian Quest (Halaman 7).\n\nAyo segera mulai dari Ruang Kelas A!",
+    text: "Halo murid-murid hebat! Bapak berikan rute eksplorasi sekolah agar LKPD-mu selesai tepat waktu:\n\n1. Ruang Kelas A (Pintu Tengah): Lokasi MISI 1 (Pengertian OS & 5 Langkah Booting).\n2. Perpustakaan (Pintu Kanan Atas): Lokasi MISI 2 (Model Lapisan Bawang).\n3. Ruang Kelas B (Pintu Kiri Atas): Lokasi MISI 3 (4 Jenis Sistem Operasi).\n4. Ruang Kantin: Lokasi MISI 4 (5 Peran Utama Di Balik Layar OS).\n5. Ruang UKS: Posko Bantuan Tips LKPD, P3K Komputer & Kesehatan.\n6. Ruang Kantor Sekolah: Lokasi Panduan Refleksi Mandiri & Penyelesaian Quest (Halaman 7).\n\nAyo segera mulai dari Ruang Kelas A!",
   },
   {
     id: "npc-oldman",
@@ -323,7 +323,67 @@ export const clues = [
   },
 
   // ============================================================
-  // AREA 6: KANTOR SEKOLAH — REFLEKSI & PENYELESAIAN LKPD
+  // AREA 6: RUANG UKS — POSKO BANTUAN TIPS LKPD, P3K & KESEHATAN
+  // Tips Belajar, Pertolongan Pertama Sistem, & Ergonomi Komputer
+  // ============================================================
+  {
+    id: "meja-dokter-uks",
+    type: "item",
+    itemStyle: "medical",
+    scene: "uks",
+    category: "Tips: Panduan LKPD",
+    x: 1500,
+    y: 400,
+    w: 64,
+    h: 64,
+    title: "Catatan Dokter UKS: Tips Mengerjakan LKPD",
+    text: "🩺 BANTUAN DETEKTIF — TIPS MENYELESAIKAN MISI LKPD\n\n(Catatan: Informasi di Ruang UKS ini adalah panduan & tips belajar tambahan agar kamu tidak bingung saat mengisi LKPD)\n\n📍 Denah & Panduan Misi LKPD:\n• Misi 1 (Hal 2 — Booting & POST): Berada di Ruang Kelas A (Papan tulis & Peti rahasia).\n• Misi 2 (Hal 3 — Model Lapisan Bawang H, K, S, A & U): Berada di Perpustakaan (Buku saku & Peti kuno).\n• Misi 3 (Hal 4 — 4 Jenis OS): Berada di Ruang Kelas B (4 Display komputer & Peti komparasi).\n• Misi 4 (Hal 5-6 — 5 Peran Utama OS): Berada di Ruang Kantin (5 Meja analisis & Peti pengetahuan).\n• Refleksi (Hal 7 — Jurnal Mandiri): Berada di Ruang Kantor Sekolah!\n\n💡 Tips Tambahan:\nJika belum menemukan jawaban, cermati setiap benda yang berkilau di dalam ruangan tersebut!",
+  },
+  {
+    id: "lemari-obat-uks",
+    type: "item",
+    itemStyle: "medical",
+    scene: "uks",
+    category: "Pengayaan: P3K Komputer",
+    x: 960,
+    y: 200,
+    w: 64,
+    h: 64,
+    title: "Kotak P3K Komputer: Solusi Sistem Operasi Bermasalah",
+    text: "🩹 PERTOLONGAN PERTAMA SISTEM KOMPUTER (P3K IT)\n\n(Materi Pengayaan dari Buku Saku Materi Halaman 14)\n\nApa yang harus dilakukan saat komputer atau laptopmu bermasalah?\n\n1. Mengatasi Aplikasi Not Responding / Freeze:\nBuka Task Manager dengan menekan tombol [Ctrl + Shift + Esc], pilih aplikasi yang macet, lalu klik tombol 'End Task' agar Sistem Operasi membebaskan memori RAM.\n\n2. Mengatasi Komputer Hang Total:\nLakukan Restart (Reboot). Saat restart, seluruh aliran listrik direset dan Sistem Operasi memuat ulang salinan Kernel yang bersih ke dalam RAM.\n\n⚠️ Peringatan Penting:\nHindari mematikan komputer langsung dengan mencabut kabel listrik! Hal itu dapat merusak file sistem dan harddisk/SSD.",
+  },
+  {
+    id: "poster-kesehatan-uks",
+    type: "sign",
+    sprite: "sign_welcome",
+    scene: "uks",
+    category: "Kesehatan: Ergonomi Digital",
+    x: 480,
+    y: 160,
+    w: 64,
+    h: 64,
+    title: "Poster Kesehatan: Ergonomi & Aturan 20-20-20",
+    text: "👁️ TIPS KESEHATAN DIGITAL (ERGONOMI INFORMATIKA)\n\nSaat berlama-lama mengerjakan tugas atau bermain di depan komputer/HP, jaga kesehatan tubuhmu:\n\n1. Aturan 20-20-20 untuk Mata:\nSetiap 20 menit menatap layar monitor, alihkan pandanganmu melihat benda berjarak 20 kaki (sekitar 6 meter) selama minimal 20 detik.\n\n2. Posisi Duduk Ergonomis:\n• Punggung tegak bersandar pada kursi.\n• Jarak mata ke layar monitor sekitar 50 - 70 cm.\n• Posisi bagian atas layar monitor sejajar dengan ketinggian mata.\n\n3. Istirahatkan Jari & Leher:\nLakukan peregangan ringan pada leher, bahu, dan jari tangan setiap 1 jam belajar!",
+  },
+  {
+    id: "kunci-perak",
+    type: "key",
+    sprite: "key_silver",
+    scene: "uks",
+    keyId: "kunci-perak",
+    hidden: true,
+    hiddenRange: 320,
+    revealRange: 130,
+    x: 180,
+    y: 480,
+    w: 64,
+    h: 64,
+    title: "Kunci Perak Penjelajah",
+    text: "✨ Kamu menemukan Kunci Perak Penjelajah yang terselip di ranjang UKS!\nLengkapi penjelajahanmu dengan mengunjungi Ruang Kantor Sekolah untuk menyelesaikan Jurnal Refleksi LKPD!",
+  },
+
+  // ============================================================
+  // AREA 7: KANTOR SEKOLAH — REFLEKSI & PENYELESAIAN LKPD
   // LKPD Halaman 7 · Alokasi 5 Menit
   // ============================================================
   {
@@ -342,21 +402,5 @@ export const clues = [
     },
     title: "Peti Master: Panduan Refleksi Halaman 7",
     text: '🏆 SELAMAT! KAMU TELAH MENYELESAIKAN SELURUH EKSPLORASI GAME!\n\n"Hardware memberi komputer raga, Sistem Operasi memberinya nyawa untuk melayani manusia."\n— Ilyas Fandhi Anggara, S.Kom\n\n📌 Panduan Mengisi LKPD Halaman 7 (Refleksi Mandiri):\n1. Soal 1 (Refleksimu):\nTuliskan bagian mana di dalam game yang menurutmu paling seru atau paling membantumu memahami Sistem Operasi (misalnya: simulasi Round Robin di Kantin, analogi restoran di Perpus, atau tebak-tebakan peti).\n2. Soal 2 (Temuan Barumu):\nTuliskan 1 hal baru yang baru kamu ketahui hari ini (misalnya: tahap POST, peran Shell, atau konsep Time Sharing CPU).\n\n📌 Checklist Refleksi LKPD:\n[✓] Sudah menyelesaikan seluruh 4 misi di dalam game\n[✓] Sudah melengkapi semua jawaban di LKPD ini\n[✓] Sudah menuliskan refleksi mandiri dengan jujur\n[✓] Sudah memahami peran tiap komponen & dinamika sistem operasi\n\nSilakan kumpulkan lembar LKPD cetakmu ke Pak Ilyas!',
-  },
-  {
-    id: "kunci-perak",
-    type: "key",
-    sprite: "key_silver",
-    scene: "kantor",
-    keyId: "kunci-perak",
-    hidden: true,
-    hiddenRange: 320,
-    revealRange: 130,
-    x: 1450,
-    y: 350,
-    w: 64,
-    h: 64,
-    title: "Kunci Perak Penjelajah",
-    text: "Kamu menemukan Kunci Perak yang berkilau di Ruang Kantor Sekolah!\nSelamat, kamu telah mengoleksi seluruh Kunci Penjelajah Sistem Operasi!",
   },
 ];
