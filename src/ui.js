@@ -1,5 +1,5 @@
 // ============================================
-// DIALOG BOX dengan TYPEWRITER EFFECT
+// DIALOG BOX dengan TYPEWRITER EFFECT & SCROLL
 // ============================================
 
 const CHARS_PER_SECOND = 45;
@@ -8,10 +8,24 @@ let lastClueId = null;
 let openTime = 0;
 let completed = false;
 
+// State scroll dialog
+let dialogScrollY = 0;
+let maxScrollY = 0;
+let isDragging = false;
+let dragStartY = 0;
+let dragStartScroll = 0;
+let isUserScrolled = false;
+let currentDialogBox = null;
+
 export function resetTypewriter() {
   lastClueId = null;
   openTime = 0;
   completed = false;
+  dialogScrollY = 0;
+  maxScrollY = 0;
+  isDragging = false;
+  isUserScrolled = false;
+  currentDialogBox = null;
 }
 
 export function isTypingDone() {
@@ -22,18 +36,28 @@ export function skipTypewriter() {
   completed = true;
 }
 
+export function getDialogScrollY() {
+  return dialogScrollY;
+}
+
 export function drawDialog(ctx, canvasW, canvasH, clue) {
   if (!clue) {
     lastClueId = null;
     completed = false;
+    currentDialogBox = null;
+    isDragging = false;
     return;
   }
 
-  // Reset timer ketika clue berubah
+  // Reset timer & scroll ketika clue berubah
   if (clue.id !== lastClueId) {
     lastClueId = clue.id;
     openTime = performance.now() / 1000;
     completed = false;
+    dialogScrollY = 0;
+    maxScrollY = 0;
+    isDragging = false;
+    isUserScrolled = false;
   }
 
   // Hitung teks yang ditampilkan
@@ -73,6 +97,31 @@ export function drawDialog(ctx, canvasW, canvasH, clue) {
   const boxX = (canvasW - boxW) / 2;
   const boxY = Math.max(isMobile ? 8 : 20, canvasH - boxH - (isMobile ? 10 : 25));
 
+  // Simpan area box saat ini untuk event listener scroll/drag
+  currentDialogBox = { boxX, boxY, boxW, boxH };
+
+  // Hitung area clipping & batas scroll
+  const lineY = isMobile ? boxY + 34 : boxY + 52;
+  const clipY = lineY + 4;
+  const clipH = boxH - (lineY - boxY) - (isMobile ? 26 : 40);
+  const visibleH = clipH;
+  maxScrollY = Math.max(0, totalTextHeight - visibleH + (isMobile ? 16 : 24));
+
+  // Auto-scroll saat typewriter sedang mengetik teks panjang ke bawah (jika belum discroll manual oleh user)
+  if (!isUserScrolled && !isDone && maxScrollY > 0) {
+    const currentLines = getWrappedLines(ctx, displayText, maxW);
+    let currentTextHeight = 0;
+    for (const l of currentLines) {
+      currentTextHeight += l.isBreak ? lineH * 0.45 : lineH;
+    }
+    if (currentTextHeight > visibleH) {
+      dialogScrollY = Math.min(maxScrollY, currentTextHeight - visibleH + 10);
+    }
+  }
+
+  // Pastikan dialogScrollY selalu dalam batas [0, maxScrollY]
+  dialogScrollY = Math.max(0, Math.min(maxScrollY, dialogScrollY));
+
   ctx.save();
 
   // Shadow
@@ -102,7 +151,6 @@ export function drawDialog(ctx, canvasW, canvasH, clue) {
   ctx.fillText(clue.title, boxX + padX, titleY);
 
   // Garis bawah judul
-  const lineY = isMobile ? boxY + 34 : boxY + 52;
   ctx.strokeStyle = "rgba(245, 183, 0, 0.35)";
   ctx.lineWidth = 1;
   ctx.beginPath();
@@ -110,20 +158,66 @@ export function drawDialog(ctx, canvasW, canvasH, clue) {
   ctx.lineTo(boxX + boxW - padX, lineY);
   ctx.stroke();
 
-  // ====== ISI TEKS (dengan clipping pengaman) ======
+  // ====== ISI TEKS (dengan clipping pengaman & scroll offset) ======
   ctx.save();
   ctx.beginPath();
-  ctx.rect(boxX + 6, lineY + 4, boxW - 12, boxH - (lineY - boxY) - (isMobile ? 26 : 40));
+  ctx.rect(boxX + 6, clipY, boxW - 12, clipH);
   ctx.clip();
 
   ctx.fillStyle = "#eee";
   ctx.font = textFont;
   const textX = boxX + padX;
   const textY = lineY + (isMobile ? 8 : 16);
-  wrapText(ctx, displayText, textX, textY, maxW, lineH);
+  wrapText(ctx, displayText, textX, textY, maxW, lineH, dialogScrollY);
   ctx.restore();
 
-  // ====== INDIKATOR NEXT ======
+  // ====== SCROLLBAR VERTIKAL (Jika konten melebihi tinggi box) ======
+  if (maxScrollY > 0) {
+    const trackW = isMobile ? 5 : 7;
+    const trackX = boxX + boxW - (isMobile ? 12 : 18);
+    const trackY = clipY + 4;
+    const trackH = clipH - 8;
+
+    // Track background
+    ctx.fillStyle = "rgba(255, 255, 255, 0.08)";
+    if (ctx.roundRect) {
+      ctx.beginPath();
+      ctx.roundRect(trackX, trackY, trackW, trackH, 3);
+      ctx.fill();
+    } else {
+      ctx.fillRect(trackX, trackY, trackW, trackH);
+    }
+
+    // Thumb
+    const thumbRatio = Math.max(0.18, Math.min(1, visibleH / totalTextHeight));
+    const thumbH = Math.max(isMobile ? 26 : 36, trackH * thumbRatio);
+    const thumbY = trackY + (dialogScrollY / maxScrollY) * (trackH - thumbH);
+
+    ctx.fillStyle = isDragging ? "#ffe043" : "#f5b700";
+    if (ctx.roundRect) {
+      ctx.beginPath();
+      ctx.roundRect(trackX, thumbY, trackW, thumbH, 3);
+      ctx.fill();
+    } else {
+      ctx.fillRect(trackX, thumbY, trackW, thumbH);
+    }
+
+    // Hint indikator jika masih ada teks di bawah
+    if (dialogScrollY < maxScrollY - 12) {
+      const hintBlink = Math.sin(performance.now() / 250) > -0.2;
+      if (hintBlink) {
+        ctx.save();
+        ctx.fillStyle = "#ffd700";
+        ctx.font = isMobile ? "bold 11px sans-serif" : "bold 12.5px sans-serif";
+        ctx.textAlign = "left";
+        ctx.textBaseline = "bottom";
+        ctx.fillText(isMobile ? "▼ Geser layar ke atas untuk lanjut baca" : "▼ Scroll ke bawah untuk lanjut baca", boxX + padX, boxY + boxH - (isMobile ? 7 : 14));
+        ctx.restore();
+      }
+    }
+  }
+
+  // ====== INDIKATOR TOMBOL KELUAR / MENGETIK ======
   if (isDone) {
     const blink = Math.sin(performance.now() / 300) > 0;
     if (blink) {
@@ -172,9 +266,9 @@ function getWrappedLines(ctx, text, maxW) {
   return lines;
 }
 
-function wrapText(ctx, text, x, y, maxW, lineH) {
+function wrapText(ctx, text, x, y, maxW, lineH, scrollY = 0) {
   const paragraphs = text.split("\n");
-  let curY = y;
+  let curY = y - scrollY;
 
   for (const para of paragraphs) {
     if (para === "") {
@@ -200,4 +294,80 @@ function wrapText(ctx, text, x, y, maxW, lineH) {
   }
 }
 
+// ====== EVENT LISTENERS UNTUK SCROLL DIALOG ======
+if (typeof window !== "undefined") {
+  // 1. Pointer Drag (Mouse & Touch)
+  window.addEventListener("pointerdown", (e) => {
+    if (!lastClueId || !currentDialogBox) return;
+    const { boxX, boxY, boxW, boxH } = currentDialogBox;
+    if (e.clientX >= boxX && e.clientX <= boxX + boxW && e.clientY >= boxY && e.clientY <= boxY + boxH) {
+      isDragging = true;
+      dragStartY = e.clientY;
+      dragStartScroll = dialogScrollY;
+    }
+  }, { passive: true });
 
+  window.addEventListener("pointermove", (e) => {
+    if (!isDragging || maxScrollY <= 0) return;
+    const dy = e.clientY - dragStartY;
+    dialogScrollY = Math.max(0, Math.min(maxScrollY, dragStartScroll - dy));
+    isUserScrolled = true;
+  }, { passive: true });
+
+  const endDrag = () => {
+    isDragging = false;
+  };
+  window.addEventListener("pointerup", endDrag, { passive: true });
+  window.addEventListener("pointercancel", endDrag, { passive: true });
+
+  // 2. Touch Events Fallback (Mobile)
+  window.addEventListener("touchstart", (e) => {
+    if (!lastClueId || !currentDialogBox || e.touches.length === 0) return;
+    const t = e.touches[0];
+    const { boxX, boxY, boxW, boxH } = currentDialogBox;
+    if (t.clientX >= boxX && t.clientX <= boxX + boxW && t.clientY >= boxY && t.clientY <= boxY + boxH) {
+      isDragging = true;
+      dragStartY = t.clientY;
+      dragStartScroll = dialogScrollY;
+    }
+  }, { passive: true });
+
+  window.addEventListener("touchmove", (e) => {
+    if (!isDragging || maxScrollY <= 0 || e.touches.length === 0) return;
+    const t = e.touches[0];
+    const dy = t.clientY - dragStartY;
+    dialogScrollY = Math.max(0, Math.min(maxScrollY, dragStartScroll - dy));
+    isUserScrolled = true;
+  }, { passive: true });
+
+  window.addEventListener("touchend", endDrag, { passive: true });
+
+  // 3. Mouse Wheel (Desktop / Laptop)
+  window.addEventListener("wheel", (e) => {
+    if (!lastClueId || maxScrollY <= 0 || !currentDialogBox) return;
+    const { boxX, boxY, boxW, boxH } = currentDialogBox;
+    if (e.clientX >= boxX && e.clientX <= boxX + boxW && e.clientY >= boxY && e.clientY <= boxY + boxH) {
+      dialogScrollY = Math.max(0, Math.min(maxScrollY, dialogScrollY + e.deltaY * 0.7));
+      isUserScrolled = true;
+    }
+  }, { passive: true });
+
+  // 4. Keyboard Navigation (Arrow Keys / Page Keys)
+  window.addEventListener("keydown", (e) => {
+    if (!lastClueId || maxScrollY <= 0) return;
+    const key = e.key.toLowerCase();
+    if (key === "arrowdown") {
+      dialogScrollY = Math.min(maxScrollY, dialogScrollY + 38);
+      isUserScrolled = true;
+    } else if (key === "arrowup") {
+      dialogScrollY = Math.max(0, dialogScrollY - 38);
+      isUserScrolled = true;
+    } else if (key === "pagedown") {
+      dialogScrollY = Math.min(maxScrollY, dialogScrollY + 150);
+      isUserScrolled = true;
+    } else if (key === "pageup") {
+      dialogScrollY = Math.max(0, dialogScrollY - 150);
+      isUserScrolled = true;
+    }
+  });
+}
